@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <StackPanel HorizontalAlignment="Left" Height="399" Margin="515,10,0,0" VerticalAlignment="Top" Width="267" Background="LightGray">
+        <StackPanel HorizontalAlignment="Left" Height="399" Margin="716,10,0,0" VerticalAlignment="Top" Width="66" Background="LightGray">
             <Label Content="Duration"/>
             <TextBox Height="23" TextWrapping="Wrap" Text="TextBox"/>
             <Label Content="Film Name"/>
@@ -15,6 +15,6 @@
             <Button Content="Add film" Click="Button_Click"/>
             <DataGrid Height="208"/>
         </StackPanel>
-        <TextBox x:Name="TextBoxMain" HorizontalAlignment="Left" Height="283" Margin="19,14,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="294"/>
+        <TextBox x:Name="TextBoxMain" HorizontalAlignment="Left" Height="283" Margin="19,14,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="287"/>
     </Grid>
 </Window>

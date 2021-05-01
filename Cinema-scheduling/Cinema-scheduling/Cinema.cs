@@ -48,17 +48,26 @@ namespace Cinema_scheduling
 
         public void SetShedulingHalls()
         {
+            Node node = new Node(TimeClosed - TimeOpen);
+            node.CreateGraph();
+            List<Schedule> list = node.GetListSchedule();
+            int index = 0;
             foreach (Hall hall in Halls)
             {
-                Node node = new Node(TimeClosed-TimeOpen);
-                node.CreateGraph();
-                hall.Schedule = node.FindMinEmptyTimeSchedule();
+                hall.Schedule = list[index];
+                list.Remove(list[index]);
+                index++;
             }
         }
 
         public string GetSchedule()
         {
-            return Halls[0].GetSheduling();
+            StringBuilder result = new StringBuilder();
+            foreach (Hall hall in Halls)
+            {
+                result.Append($"\n Hall #{hall.Number}\n{hall.GetSheduling()}");
+            }
+            return result.ToString();
         }
     }
 }

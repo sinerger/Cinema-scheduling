@@ -24,12 +24,13 @@ namespace Cinema_scheduling
         public MainWindow()
         {
             InitializeComponent();
-            Cinema = new Cinema(1);
+            Cinema = new Cinema(2);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Cinema.SetShedulingHalls();
+            TextBoxMain.Text = string.Empty;
             TextBoxMain.Text = Cinema.GetSchedule();
         }
     }

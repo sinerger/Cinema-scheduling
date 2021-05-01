@@ -76,7 +76,7 @@ namespace Cinema_scheduling
                 //    //return GetScheduleMaxUniqueFilms(suitableSchedule);
                 //    return GetMinSchedule(suitableSchedule);
                 //}
-                return GetMinSchedule(schedules);
+                return GetScheduleMaxUniqueFilms(schedules);
 
             }
         }
@@ -93,7 +93,7 @@ namespace Cinema_scheduling
                     {
                         minSchedule = schedule;
                     }
-                    else if ((minSchedule.EmptyTime == schedule.EmptyTime) && (minSchedule.Films.Count > schedule.Films.Count))
+                    else if ((minSchedule.EmptyTime == schedule.EmptyTime) && (minSchedule.Films.Count < schedule.Films.Count))
                     {
                         minSchedule = schedule;
                     }
@@ -109,7 +109,6 @@ namespace Cinema_scheduling
         {
             if (schedules != null)
             {
-                int countUniqueFilms = License.Films.Count;
                 foreach (Schedule schedule in schedules)
                 {
                     foreach (Film film in License.Films)
@@ -128,7 +127,10 @@ namespace Cinema_scheduling
                 {
                     if (scheduleMaxUniqueFilm.CountUniqueFilm < schedule.CountUniqueFilm)
                     {
-                        scheduleMaxUniqueFilm = schedule;
+                        if (scheduleMaxUniqueFilm.EmptyTime > schedule.EmptyTime)
+                        {
+                            scheduleMaxUniqueFilm = schedule;
+                        }
                     }
                 }
 
@@ -137,6 +139,28 @@ namespace Cinema_scheduling
 
             throw new ArgumentNullException("Schedule is null");
         }
+
+        public List<Schedule> GetListSchedule()
+        {
+            if (Next.Count == 0)
+            {
+                return new List<Schedule>() { new Schedule(EmptyTime, CurrentFilms) };
+            }
+            else
+            {
+                List<Schedule> schedules = new List<Schedule>();
+
+                foreach (Node n in Next)
+                {
+                    schedules.AddRange(n.GetListSchedule());
+                }
+
+                schedules.Sort();
+                return schedules;
+
+            }
+        }
+
 
         //private List<Schedule> GetScheduleWithAlternatingFilms(List<Schedule> schedules)
         //{

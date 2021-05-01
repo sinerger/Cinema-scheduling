@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cinema_scheduling
 {
-    public class Schedule
+    public class Schedule : IComparable
     {
         public int EmptyTime { get; set; }
         public int CountUniqueFilm { get; set; }
@@ -35,6 +35,28 @@ namespace Cinema_scheduling
             return schedule.ToString();
         }
 
+        public int CompareTo(object obj)
+        {
+            if(obj is Schedule)
+            {
+                Schedule schedule = (Schedule)obj;
+                if(EmptyTime<schedule.EmptyTime&&CountUniqueFilm<schedule.CountUniqueFilm&&Films.Count< schedule.Films.Count)
+                {
+                    return -1;
+                }
+                else if (EmptyTime == schedule.EmptyTime && CountUniqueFilm == schedule.CountUniqueFilm && Films.Count == schedule.Films.Count)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+
+            throw new ArgumentException("Incorrect type");
+        }
+
         private string ConvertToTime(int value)
         {
             int hour = value / 60;
@@ -43,5 +65,7 @@ namespace Cinema_scheduling
 
             return $"{hour}:{strMinute}";
         }
+
+        
     }
 }
