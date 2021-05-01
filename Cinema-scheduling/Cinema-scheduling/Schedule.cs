@@ -9,6 +9,7 @@ namespace Cinema_scheduling
     public class Schedule
     {
         public int EmptyTime { get; set; }
+        public int CountUniqueFilm { get; set; }
         public List<Film> Films { get; set; }
 
         public Schedule(int emptyTime, List<Film> currentFilms = null)
@@ -17,7 +18,7 @@ namespace Cinema_scheduling
             Films = currentFilms;
         }
 
-        public  override string ToString()
+        public override string ToString()
         {
             StringBuilder schedule = new StringBuilder();
             int timeStartFilm = Cinema.TimeOpen;
@@ -36,10 +37,11 @@ namespace Cinema_scheduling
 
         private string ConvertToTime(int value)
         {
-            var hour = value / 60;
-            var minute = value % 60;
+            int hour = value / 60;
+            int minute = value % 60;
+            string strMinute = minute == 0 ? "00" : minute.ToString();
 
-            return $"{hour}:{minute}";
+            return $"{hour}:{strMinute}";
         }
     }
 }
