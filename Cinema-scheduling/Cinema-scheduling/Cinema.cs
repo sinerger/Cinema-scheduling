@@ -38,6 +38,7 @@ namespace Cinema_scheduling
         public Cinema(int countHall)
         {
             CountHall = countHall;
+            Halls = new List<Hall>();
 
             for (int i = 0; i < CountHall; i++)
             {
@@ -51,8 +52,13 @@ namespace Cinema_scheduling
             {
                 Node node = new Node(TimeClosed-TimeOpen);
                 node.CreateGraph();
-                hall.Sheduling = node.FindMinEmptyTimeSheduling();
+                hall.Schedule = node.FindMinEmptyTimeSchedule();
             }
+        }
+
+        public string GetSchedule()
+        {
+            return Halls[0].GetSheduling();
         }
     }
 }

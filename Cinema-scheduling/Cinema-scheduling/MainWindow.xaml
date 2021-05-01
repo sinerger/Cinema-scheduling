@@ -12,8 +12,9 @@
             <TextBox Height="23" TextWrapping="Wrap" Text="TextBox"/>
             <Label Content="Film Name"/>
             <TextBox Height="23" TextWrapping="Wrap" Text="TextBox"/>
-            <Button Content="Add film"/>
+            <Button Content="Add film" Click="Button_Click"/>
             <DataGrid Height="208"/>
         </StackPanel>
+        <TextBox x:Name="TextBoxMain" HorizontalAlignment="Left" Height="283" Margin="19,14,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="294"/>
     </Grid>
 </Window>

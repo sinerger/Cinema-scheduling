@@ -13,7 +13,6 @@ namespace Cinema_scheduling
 
         private License()
         {
-            _license = new License();
             Films = new List<Film>()
             {
                 new Film(100,"Fast & Furious"),
@@ -22,6 +21,9 @@ namespace Cinema_scheduling
                 new Film(180,"Fast & Furious 4"),
                 new Film(120,"Fast & Furious 5"),
                 new Film(135,"Fast & Furious 6"),
+                new Film(200,"Fast & Furious 7"),
+                new Film(145,"Fast & Furious 8"),
+                new Film(245,"Fast & Furious 9")
             };
         }
 

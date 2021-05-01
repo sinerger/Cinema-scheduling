@@ -12,7 +12,6 @@ namespace Cinema_scheduling
         public int EmptyTime { get; set; }
         public List<Film> CurrentFilms { get; set; }
         public List<Node> Next { get; set; }
-
         public Node(int emptyTime, List<Film> currentFilms = null)
         {
             EmptyTime = emptyTime;
@@ -44,55 +43,95 @@ namespace Cinema_scheduling
             }
         }
 
-        public void WriteAllLeaves()
+        public Schedule FindMinEmptyTimeSchedule()
         {
             if (Next.Count == 0)
             {
-                foreach (Film film in CurrentFilms)
-                {
-                    
-                }
+                return new Schedule(EmptyTime, CurrentFilms);
             }
             else
             {
-                foreach (Node node in Next)
-                {
-                    node.WriteAllLeaves();
-                }
-            }
-        }
-
-        public Sheduling FindMinEmptyTimeSheduling()
-        {
-            if (Next.Count == 0)
-            {
-                return new Sheduling(EmptyTime, CurrentFilms);
-            }
-            else
-            {
-                List<Sheduling> shedulings = new List<Sheduling>();
+                List<Schedule> schedules = new List<Schedule>();
 
                 foreach (Node n in Next)
                 {
-                    shedulings.Add(n.FindMinEmptyTimeSheduling());
+                    schedules.Add(n.FindMinEmptyTimeSchedule());
                 }
 
-                Sheduling minSheduling = shedulings[0];
-
-                foreach (Sheduling r in shedulings)
+                List<Schedule> suitableSchedule = GetBestSheduling(schedules);
+                if (suitableSchedule.Count > 0)
                 {
-                    if (minSheduling.EmptyTime >= r.EmptyTime)
+                    Schedule minSchedule = suitableSchedule[0];
+
+                    foreach (Schedule schedule in suitableSchedule)
                     {
-                        minSheduling = r;
+                        if (minSchedule.EmptyTime >= schedule.EmptyTime)
+                        {
+                            minSchedule = schedule;
+                        }
+                        else if ((minSchedule.EmptyTime == schedule.EmptyTime) && (minSchedule.Films.Count > schedule.Films.Count))
+                        {
+                            minSchedule = schedule;
+                        }
                     }
-                    else if ((minSheduling.EmptyTime == r.EmptyTime) && (minSheduling.Films.Count > r.Films.Count))
+                    return minSchedule;
+                }
+                else
+                {
+                    Schedule minSchedule = schedules[0];
+
+                    foreach (Schedule schedule in schedules)
                     {
-                        minSheduling = r;
+                        if (minSchedule.EmptyTime >= schedule.EmptyTime)
+                        {
+                            minSchedule = schedule;
+                        }
+                        else if ((minSchedule.EmptyTime == schedule.EmptyTime) && (minSchedule.Films.Count > schedule.Films.Count))
+                        {
+                            minSchedule = schedule;
+                        }
+                    }
+
+                    return minSchedule;
+                }
+            }
+        }
+        
+        private List<Schedule> GetBestSheduling(List<Schedule> schedules)
+        {
+            if (schedules != null)
+            {
+                List<Schedule> suitableSchedule = new List<Schedule>();
+
+                foreach (Schedule schedule in schedules)
+                {
+                    if (schedule.Films.Count >= 2)
+                    {
+                        Film lastFilm = schedule.Films[0];
+                        bool isSuitableSchedule = true;
+
+                        for (int i = 1; i < schedule.Films.Count; i++)
+                        {
+                            if (lastFilm.Equals(schedule.Films[i]))
+                            {
+                                isSuitableSchedule = false;
+                                break;
+                            }
+
+                            lastFilm = schedule.Films[i];
+                        }
+
+                        if (isSuitableSchedule)
+                        {
+                            suitableSchedule.Add(schedule);
+                        }
                     }
                 }
 
-                return minSheduling;
+                return suitableSchedule;
             }
+
+            throw new ArgumentNullException("Schedule is null");
         }
     }
 }

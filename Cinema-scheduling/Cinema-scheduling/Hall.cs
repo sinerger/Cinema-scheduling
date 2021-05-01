@@ -9,22 +9,22 @@ namespace Cinema_scheduling
     public class Hall
     {
         public int Number { get; set; }
-        public Sheduling Sheduling { get; set; }
+        public Schedule Schedule { get; set; }
 
         public Hall(int number)
         {
             Number = number;
-            Sheduling = new Sheduling(Cinema.TimeClosed - Cinema.TimeOpen);
+            Schedule = new Schedule(Cinema.TimeClosed - Cinema.TimeOpen);
 
         }
         public string GetSheduling()
         {
-            if (Sheduling != null)
+            if (Schedule != null)
             {
-                return Sheduling.ToString();
+                return Schedule.ToString();
             }
 
-            throw new ArgumentNullException("Sheduling is null");
+            throw new ArgumentNullException("Schedule is null");
         }
     }
 }

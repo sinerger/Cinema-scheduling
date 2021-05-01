@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Cinema_scheduling
 {
-    public class Sheduling
+    public class Schedule
     {
         public int EmptyTime { get; set; }
         public List<Film> Films { get; set; }
 
-        public Sheduling(int emptyTime, List<Film> currentFilms = null)
+        public Schedule(int emptyTime, List<Film> currentFilms = null)
         {
             EmptyTime = emptyTime;
             Films = currentFilms;
@@ -19,18 +19,19 @@ namespace Cinema_scheduling
 
         public  override string ToString()
         {
-            StringBuilder sheduling = new StringBuilder();
+            StringBuilder schedule = new StringBuilder();
             int timeStartFilm = Cinema.TimeOpen;
 
             foreach (Film film in Films)
             {
                 int timeEndFilm = timeStartFilm + film.Duration;
                 string str = $"{ConvertToTime(timeStartFilm)} - {ConvertToTime(timeEndFilm)} {film.Name}\n";
+                timeStartFilm = timeEndFilm;
 
-                sheduling.Append(str);
+                schedule.Append(str);
             }
 
-            return sheduling.ToString();
+            return schedule.ToString();
         }
 
         private string ConvertToTime(int value)

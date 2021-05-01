@@ -20,9 +20,17 @@ namespace Cinema_scheduling
     /// </summary>
     public partial class MainWindow : Window
     {
+        public Cinema Cinema { get; set; }
         public MainWindow()
         {
             InitializeComponent();
+            Cinema = new Cinema(1);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Cinema.SetShedulingHalls();
+            TextBoxMain.Text = Cinema.GetSchedule();
         }
     }
 }
