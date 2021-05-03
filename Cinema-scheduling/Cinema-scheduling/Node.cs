@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cinema_scheduling.GraphCreator;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,10 +9,12 @@ namespace Cinema_scheduling
 {
     public class Node
     {
-        public License License;
+        public IGraphCreator GraphCreator { get; set; }
+        public License License { get; set; }
         public int EmptyTime { get; set; }
         public List<Film> CurrentFilms { get; set; }
         public List<Node> Next { get; set; }
+
         public Node(int emptyTime, List<Film> currentFilms = null)
         {
             EmptyTime = emptyTime;
@@ -30,27 +33,7 @@ namespace Cinema_scheduling
 
         public void CreateGraph(Film lastFilm = null)
         {
-            if (License.Films != null && License.Films.Count > 0)
-            {
-                foreach (Film film in License.Films)
-                {
-                    if (License.Films.Count > 1)
-                    {
-                        if (EmptyTime >= film.Duration && lastFilm != film)
-                        {
-                            List<Film> tempFilmList = new List<Film>(CurrentFilms);
-                            tempFilmList.Add(film);
-                            Node newNode = new Node(EmptyTime - film.Duration, tempFilmList);
-                            Next.Add(newNode);
-                            newNode.CreateGraph(film);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Incorrect film list");
-            }
+            GraphCreator.CreateGraph();
         }
 
         public Schedule FindMinEmptyTimeSchedule()
@@ -68,16 +51,7 @@ namespace Cinema_scheduling
                     schedules.Add(n.FindMinEmptyTimeSchedule());
                 }
 
-                //List<Schedule> suitableSchedule = GetScheduleWithAlternatingFilms(schedules);
-
-                //var isss = false;
-                //if (suitableSchedule.Count > 0 && isss)
-                //{
-                //    //return GetScheduleMaxUniqueFilms(suitableSchedule);
-                //    return GetMinSchedule(suitableSchedule);
-                //}
                 return GetScheduleMaxUniqueFilms(schedules);
-
             }
         }
 
@@ -156,11 +130,21 @@ namespace Cinema_scheduling
                 }
 
                 schedules.Sort();
-                return schedules;
 
+                return schedules;
             }
         }
 
+        public List<Schedule> GetListForHalls(int countHalls)
+        {
+            List<Schedule> allSchedules = GetListSchedule();
+            List<Schedule> targetSchedules = new List<Schedule>();
+
+            while(targetSchedules.Count <= 3)
+            {
+
+            }
+        }
 
         //private List<Schedule> GetScheduleWithAlternatingFilms(List<Schedule> schedules)
         //{

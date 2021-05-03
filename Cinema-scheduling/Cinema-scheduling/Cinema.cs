@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cinema_scheduling.Factory;
+using Cinema_scheduling.GraphCreator;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,10 +50,14 @@ namespace Cinema_scheduling
 
         public void SetShedulingHalls()
         {
-            Node node = new Node(TimeClosed - TimeOpen);
+            Node node = new NodeForBestFillingHallFactory().GetNode(TimeClosed - TimeOpen);
+
             node.CreateGraph();
+
             List<Schedule> list = node.GetListSchedule();
+
             int index = 0;
+
             foreach (Hall hall in Halls)
             {
                 hall.Schedule = list[index];

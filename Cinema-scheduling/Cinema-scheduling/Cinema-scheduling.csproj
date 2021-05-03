@@ -55,6 +55,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Factory\INodeFactory.cs" />
+    <Compile Include="Factory\NodeForBestFillingHallFactory.cs" />
+    <Compile Include="GraphCreator\GraphCreatorForBestFillingHall.cs" />
+    <Compile Include="GraphCreator\GraphCreatorForBestFillingSeveralHalls.cs" />
+    <Compile Include="GraphCreator\IGraphCreator.cs" />
     <Compile Include="Schedule.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

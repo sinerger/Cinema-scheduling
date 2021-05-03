@@ -37,10 +37,10 @@ namespace Cinema_scheduling
 
         public int CompareTo(object obj)
         {
-            if(obj is Schedule)
+            if (obj is Schedule)
             {
                 Schedule schedule = (Schedule)obj;
-                if(EmptyTime<schedule.EmptyTime&&CountUniqueFilm<schedule.CountUniqueFilm&&Films.Count< schedule.Films.Count)
+                if (EmptyTime < schedule.EmptyTime && CountUniqueFilm < schedule.CountUniqueFilm && Films.Count < schedule.Films.Count)
                 {
                     return -1;
                 }
@@ -66,6 +66,6 @@ namespace Cinema_scheduling
             return $"{hour}:{strMinute}";
         }
 
-        
+
     }
 }
