@@ -9,14 +9,17 @@ namespace Cinema_scheduling
 {
     public class Node
     {
+        private List<Schedule> _schedules;
         public IGraphCreator GraphCreator { get; set; }
         public License License { get; set; }
         public int EmptyTime { get; set; }
         public List<Film> CurrentFilms { get; set; }
         public List<Node> Next { get; set; }
 
+
         public Node(int emptyTime, List<Film> currentFilms = null)
         {
+            _schedules = new List<Schedule>();
             EmptyTime = emptyTime;
             Next = new List<Node>();
             License = License.GetLicense();
@@ -33,7 +36,7 @@ namespace Cinema_scheduling
 
         public void CreateGraph(Film lastFilm = null)
         {
-            GraphCreator.CreateGraph();
+            GraphCreator.CreateGraph(lastFilm);
         }
 
         public Schedule FindMinEmptyTimeSchedule()
@@ -122,29 +125,80 @@ namespace Cinema_scheduling
             }
             else
             {
-                List<Schedule> schedules = new List<Schedule>();
-
                 foreach (Node n in Next)
                 {
-                    schedules.AddRange(n.GetListSchedule());
+                    _schedules.AddRange(n.GetListSchedule());
                 }
 
-                schedules.Sort();
+                _schedules.Sort();
 
-                return schedules;
+                return _schedules;
             }
         }
 
-        public List<Schedule> GetListForHalls(int countHalls)
+        public List<Schedule> QQQ(int countHall)
         {
-            List<Schedule> allSchedules = GetListSchedule();
+            List<Film> films = new List<Film>(License.Films);
             List<Schedule> targetSchedules = new List<Schedule>();
 
-            while(targetSchedules.Count <= 3)
+            foreach (Schedule schedule in _schedules)
             {
+                if (targetSchedules.Count < countHall)
+                {
+                    if (www(schedule,films))
+                    {
+                        targetSchedules.Add(schedule);
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
 
+            return targetSchedules;
+        }
+
+        private bool www(Schedule schedule, List<Film> films)
+        {
+            int count = 0;
+            foreach (Film film in schedule.Films)
+            {
+                if (films.Contains(film))
+                {
+                    count++;
+                }
+            }
+
+            if (count > films.Count / 2)
+            {
+                foreach (Film film in schedule.Films)
+                {
+                    if (films.Contains(film))
+                    {
+                        films.Remove(film);
+                    }
+                }
+
+                return true;
+            }
+            else if(films.Count == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
+
+        //public List<Schedule> GetListForHalls(int countHalls)
+        //{
+        //    List<Schedule> targetSchedules = GetListSchedule();
+        //    List<Film> allFilms = new List<Film>(License.Films);
+
+        //    while
+        //}
 
         //private List<Schedule> GetScheduleWithAlternatingFilms(List<Schedule> schedules)
         //{

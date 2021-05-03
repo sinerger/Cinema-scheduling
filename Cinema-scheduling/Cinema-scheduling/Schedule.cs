@@ -40,11 +40,11 @@ namespace Cinema_scheduling
             if (obj is Schedule)
             {
                 Schedule schedule = (Schedule)obj;
-                if (EmptyTime < schedule.EmptyTime && CountUniqueFilm < schedule.CountUniqueFilm && Films.Count < schedule.Films.Count)
+                if (EmptyTime < schedule.EmptyTime )
                 {
                     return -1;
                 }
-                else if (EmptyTime == schedule.EmptyTime && CountUniqueFilm == schedule.CountUniqueFilm && Films.Count == schedule.Films.Count)
+                else if (EmptyTime == schedule.EmptyTime )
                 {
                     return 0;
                 }

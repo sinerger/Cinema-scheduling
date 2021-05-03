@@ -16,14 +16,14 @@ namespace Cinema_scheduling
             Films = new List<Film>()
             {
                 new Film(150,"Fast & Furious"),
-                new Film(150,"Fast & Furious 2"),
-                new Film(110,"Fast & Furious 3"),
+                new Film(110,"Fast & Furious 2"),
+                new Film(120,"Fast & Furious 3"),
                 new Film(180,"Fast & Furious 4"),
                 new Film(120,"Fast & Furious 5"),
-                new Film(135,"Fast & Furious 6"),
-                new Film(200,"Fast & Furious 7"),
-                new Film(145,"Fast & Furious 8"),
-                new Film(245,"Fast & Furious 9")
+                new Film(160,"Fast & Furious 6"),
+                //new Film(200,"Fast & Furious 7"),
+                //new Film(145,"Fast & Furious 8"),
+                //new Film(245,"Fast & Furious 9")
             };
         }
 
@@ -35,6 +35,18 @@ namespace Cinema_scheduling
             }
 
             return _license;
+        }
+
+        public int GetSumDurationAllFilms()
+        {
+            int result = 0;
+
+            foreach (Film film in Films)
+            {
+                result += film.Duration;
+            }
+
+            return result;
         }
     }
 }
