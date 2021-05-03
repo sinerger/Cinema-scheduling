@@ -41,10 +41,10 @@ namespace Cinema_scheduling
         public Cinema(int countHall)
         {
             _license = License.GetLicense();
-            CountHall = countHall;
             Halls = new List<Hall>();
+            CountHall = countHall;
 
-            for (int i = 0; i < CountHall; i++)
+            for (int i = 1; i <= CountHall; i++)
             {
                 Halls.Add(new Hall(i));
             }
@@ -52,16 +52,22 @@ namespace Cinema_scheduling
 
         public void SetSchedulesHalls()
         {
-            if (_license.GetSumDurationAllFilms() <= GetSumAllTimeHalls())
+            Node node = new NodeForBestFillingHallFactory().GetNode(TimeClosed - TimeOpen);
+            node.CreateGraph();
+            List<Schedule> list = new List<Schedule>();
+            if ((TimeClosed - TimeOpen) * CountHall > _license.GetAllDurationFilms())
             {
-                Node node = new NodeForBestFillingHallFactory().GetNode(TimeClosed - TimeOpen);
+                list = node.GetListSchedulesforHalls(CountHall);
+            }
+            else
+            {
+                list = node.GetListSchedulesMaxUniqueFilmForHalls(CountHall);
+            }
 
-                node.CreateGraph();
-                node.GetListSchedule();
-                List<Schedule> list = node.QQQ(CountHall);
+            int index = 0;
 
-                int index = 0;
-
+            if (list.Count > 0)
+            {
                 foreach (Hall hall in Halls)
                 {
                     hall.Schedule = list[index];
@@ -75,50 +81,24 @@ namespace Cinema_scheduling
                         index++;
                     }
                 }
-                //for (int i = 0; i < Halls.Count; i++)
-                //{
-                //    for (int j = Halls.Count - 1; j > i; j--)
-                //    {
-                //        if (Halls[i].Schedule.Equals(Halls[j].Schedule))
-                //        {
-                //            Film tempFilm = Halls[j].Schedule.Films[0];
-                //            Halls[j].Schedule.Films.Remove(tempFilm);
-                //            Halls[j].Schedule.Films.Add(tempFilm);
-                //        }
-                //    }
-                //}
-                //foreach (Hall hall in Halls)
-                //{
-                //    foreach (Hall hall1 in Halls)
-                //    {
-                //        if (hall.Schedule.Equals(hall1.Schedule))
-                //        {
-                //            Film tempFilm = hall1.Schedule.Films[0];
-                //            hall1.Schedule.Films.Remove(tempFilm);
-                //            hall1.Schedule.Films.Add(tempFilm);
-                //        }
-                //    }
-                //}
-            }
-            else
-            {
-
             }
         }
 
-        public string GetSchedule()
+        public string GetSchedulesAllHalls()
         {
-            StringBuilder result = new StringBuilder();
-            foreach (Hall hall in Halls)
+            if (Halls != null)
             {
-                result.Append($"\n Hall #{hall.Number}\n{hall.GetSheduling()}");
-            }
-            return result.ToString();
-        }
+                StringBuilder result = new StringBuilder();
 
-        private int GetSumAllTimeHalls()
-        {
-            return (TimeClosed - TimeOpen) * Halls.Count;
+                foreach (Hall hall in Halls)
+                {
+                    result.Append($"\n Hall #{hall.Number}\n{hall.GetSheduling()}");
+                }
+
+                return result.ToString();
+            }
+
+            throw new ArgumentNullException("List Halls is null");
         }
     }
 }

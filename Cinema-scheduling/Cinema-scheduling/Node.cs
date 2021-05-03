@@ -9,17 +9,14 @@ namespace Cinema_scheduling
 {
     public class Node
     {
-        private List<Schedule> _schedules;
         public IGraphCreator GraphCreator { get; set; }
         public License License { get; set; }
         public int EmptyTime { get; set; }
         public List<Film> CurrentFilms { get; set; }
         public List<Node> Next { get; set; }
 
-
         public Node(int emptyTime, List<Film> currentFilms = null)
         {
-            _schedules = new List<Schedule>();
             EmptyTime = emptyTime;
             Next = new List<Node>();
             License = License.GetLicense();
@@ -39,24 +36,180 @@ namespace Cinema_scheduling
             GraphCreator.CreateGraph(lastFilm);
         }
 
-        public Schedule FindMinEmptyTimeSchedule()
+        public List<Schedule> GetListSchedulesforHalls(int countHalls)
         {
-            if (Next.Count == 0)
+            if (License.Films != null)
             {
-                return new Schedule(EmptyTime, CurrentFilms);
+                List<Film> remainingFilms = new List<Film>(License.Films);
+                List<Schedule> allSchedules = GetAllSchedules();
+                List<Schedule> resultList = new List<Schedule>();
+
+                for (int i = 0; i < allSchedules.Count; i++)
+                {
+                    if (resultList.Count < countHalls)
+                    {
+                        if (CheckSchedule(allSchedules[i], remainingFilms))
+                        {
+                            resultList.Add(allSchedules[i]);
+
+                            if (resultList.Count == countHalls && !CheckListSchedule(resultList))
+                            {
+                                resultList.RemoveAt(resultList.Count - 1);
+                            }
+                            else
+                            {
+                                foreach (Film currentFilm in allSchedules[i].Films)
+                                {
+                                    if (remainingFilms.Contains(currentFilm))
+                                    {
+                                        remainingFilms.Remove(currentFilm);
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                return resultList;
+
+            }
+
+            throw new ArgumentNullException("List License.Films is null");
+        }
+
+        public List<Schedule> GetListSchedulesMaxUniqueFilmForHalls(int countHalls)
+        {
+            if (License.Films != null)
+            {
+                List<Film> remainingFilms = new List<Film>(License.Films);
+                List<Schedule> allSchedules = GetAllSchedules();
+                List<Schedule> resultList = new List<Schedule>();
+
+                for (int i = 0; i < allSchedules.Count; i++)
+                {
+                    if (resultList.Count < countHalls)
+                    {
+                        if (CheckSchedule(allSchedules[i], remainingFilms))
+                        {
+                            resultList.Add(allSchedules[i]);
+
+                            foreach (Film currentFilm in allSchedules[i].Films)
+                            {
+                                if (remainingFilms.Contains(currentFilm))
+                                {
+                                    remainingFilms.Remove(currentFilm);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                return resultList;
+
+            }
+
+            throw new ArgumentNullException("List License.Films is null");
+        }
+
+        private bool CheckSchedule(Schedule currentSchedule, List<Film> remainingFilms)
+        {
+            if (currentSchedule != null && remainingFilms != null)
+            {
+                bool result = false;
+                int countFilms = 0;
+
+                foreach (Film film in currentSchedule.Films)
+                {
+                    if (remainingFilms.Contains(film))
+                    {
+                        countFilms++;
+                    }
+                }
+
+                if (countFilms > remainingFilms.Count / 2 || remainingFilms.Count == 0)
+                {
+                    result = true;
+                }
+
+                return result;
+            }
+            else if (remainingFilms == null)
+            {
+                throw new ArgumentNullException("List remainingFilms is null");
             }
             else
             {
-                List<Schedule> schedules = new List<Schedule>();
+                throw new ArgumentNullException("Schedule is null");
+            }
+        }
+
+        private bool CheckListSchedule(List<Schedule> schedules)
+        {
+            if (License.Films != null)
+            {
+                bool result = false;
+                List<Film> allFilms = new List<Film>(License.Films);
+
+                foreach (Schedule schedule in schedules)
+                {
+                    foreach (Film currentFilm in schedule.Films)
+                    {
+                        if (allFilms.Contains(currentFilm))
+                        {
+                            allFilms.Remove(currentFilm);
+                        }
+                    }
+                }
+
+                if (allFilms.Count == 0)
+                {
+                    result = true;
+                }
+
+                return result;
+            }
+
+            throw new ArgumentNullException("List License.Films is null");
+        }
+
+        private List<Schedule> GetAllSchedules()
+        {
+            if (Next.Count == 0)
+            {
+                return new List<Schedule>() { new Schedule(EmptyTime, CurrentFilms) };
+            }
+            else
+            {
+                List<Schedule> allSchedules = new List<Schedule>();
 
                 foreach (Node n in Next)
                 {
-                    schedules.Add(n.FindMinEmptyTimeSchedule());
+                    allSchedules.AddRange(n.GetAllSchedules());
                 }
 
-                return GetScheduleMaxUniqueFilms(schedules);
+                allSchedules.Sort();
+
+                return allSchedules;
             }
         }
+
+
+
+
+
+
+
+
+
 
         private Schedule GetMinSchedule(List<Schedule> schedules)
         {
@@ -80,6 +233,25 @@ namespace Cinema_scheduling
             }
 
             throw new ArgumentNullException("List Schedules is empty");
+        }
+
+        public Schedule FindMinEmptyTimeSchedule()
+        {
+            if (Next.Count == 0)
+            {
+                return new Schedule(EmptyTime, CurrentFilms);
+            }
+            else
+            {
+                List<Schedule> schedules = new List<Schedule>();
+
+                foreach (Node n in Next)
+                {
+                    schedules.Add(n.FindMinEmptyTimeSchedule());
+                }
+
+                return GetScheduleMaxUniqueFilms(schedules);
+            }
         }
 
         private Schedule GetScheduleMaxUniqueFilms(List<Schedule> schedules)
@@ -116,125 +288,5 @@ namespace Cinema_scheduling
 
             throw new ArgumentNullException("Schedule is null");
         }
-
-        public List<Schedule> GetListSchedule()
-        {
-            if (Next.Count == 0)
-            {
-                return new List<Schedule>() { new Schedule(EmptyTime, CurrentFilms) };
-            }
-            else
-            {
-                foreach (Node n in Next)
-                {
-                    _schedules.AddRange(n.GetListSchedule());
-                }
-
-                _schedules.Sort();
-
-                return _schedules;
-            }
-        }
-
-        public List<Schedule> QQQ(int countHall)
-        {
-            List<Film> films = new List<Film>(License.Films);
-            List<Schedule> targetSchedules = new List<Schedule>();
-
-            foreach (Schedule schedule in _schedules)
-            {
-                if (targetSchedules.Count < countHall)
-                {
-                    if (www(schedule,films))
-                    {
-                        targetSchedules.Add(schedule);
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            return targetSchedules;
-        }
-
-        private bool www(Schedule schedule, List<Film> films)
-        {
-            int count = 0;
-            foreach (Film film in schedule.Films)
-            {
-                if (films.Contains(film))
-                {
-                    count++;
-                }
-            }
-
-            if (count > films.Count / 2)
-            {
-                foreach (Film film in schedule.Films)
-                {
-                    if (films.Contains(film))
-                    {
-                        films.Remove(film);
-                    }
-                }
-
-                return true;
-            }
-            else if(films.Count == 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        //public List<Schedule> GetListForHalls(int countHalls)
-        //{
-        //    List<Schedule> targetSchedules = GetListSchedule();
-        //    List<Film> allFilms = new List<Film>(License.Films);
-
-        //    while
-        //}
-
-        //private List<Schedule> GetScheduleWithAlternatingFilms(List<Schedule> schedules)
-        //{
-        //    if (schedules != null)
-        //    {
-        //        List<Schedule> suitableSchedule = new List<Schedule>();
-
-        //        foreach (Schedule schedule in schedules)
-        //        {
-        //            if (schedule.Films.Count >= 2)
-        //            {
-        //                Film lastFilm = schedule.Films[0];
-        //                bool isSuitableSchedule = true;
-
-        //                for (int i = 1; i < schedule.Films.Count; i++)
-        //                {
-        //                    if (lastFilm.Equals(schedule.Films[i]))
-        //                    {
-        //                        isSuitableSchedule = false;
-        //                        break;
-        //                    }
-
-        //                    lastFilm = schedule.Films[i];
-        //                }
-
-        //                if (isSuitableSchedule)
-        //                {
-        //                    suitableSchedule.Add(schedule);
-        //                }
-        //            }
-        //        }
-
-        //        return suitableSchedule;
-        //    }
-
-        //    throw new ArgumentNullException("Schedule is null");
-        //}
     }
 }

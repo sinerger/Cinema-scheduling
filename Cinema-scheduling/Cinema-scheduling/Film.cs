@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cinema_scheduling
 {
-    public class Film
+    public class Film : IComparable
     {
         public int Duration { get; set; }
         public string Name { get; set; }
@@ -40,6 +40,31 @@ namespace Cinema_scheduling
             result.Append($"{ time} {Name}");
 
             return result.ToString();
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj is Film)
+            {
+                int result = 1;
+                Film film = (Film) obj;
+                if (Duration < film.Duration)
+                {
+                    result = -1;
+                }
+                else if (Duration == film.Duration)
+                {
+                    result = 0;
+                }
+                else
+                {
+                    result = 1;
+                }
+
+                return result;
+            }
+
+            throw new ArgumentException("Incorrect type");
         }
     }
 }

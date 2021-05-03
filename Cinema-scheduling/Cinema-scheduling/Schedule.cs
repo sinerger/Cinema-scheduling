@@ -12,10 +12,43 @@ namespace Cinema_scheduling
         public int CountUniqueFilm { get; set; }
         public List<Film> Films { get; set; }
 
-        public Schedule(int emptyTime, List<Film> currentFilms = null)
+        public Schedule(int emptyTime, List<Film> currentFilms)
         {
             EmptyTime = emptyTime;
             Films = currentFilms;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj is Schedule)
+            {
+                int result = 1;
+                Schedule schedule = (Schedule)obj;
+
+                if (EmptyTime < schedule.EmptyTime)
+                {
+                    result = -1;
+                }
+                else if (EmptyTime == schedule.EmptyTime)
+                {
+                    if (Films.Count < schedule.Films.Count)
+                    {
+                        result = -1;
+                    }
+                    else if (Films.Count > schedule.Films.Count)
+                    {
+                        result = 1;
+                    }
+                    else
+                    {
+                        result = 0;
+                    }
+                }
+
+                return result;
+            }
+
+            throw new ArgumentException("Incorrect type");
         }
 
         public override string ToString()
@@ -26,35 +59,13 @@ namespace Cinema_scheduling
             foreach (Film film in Films)
             {
                 int timeEndFilm = timeStartFilm + film.Duration;
-                string str = $"{ConvertToTime(timeStartFilm)} - {ConvertToTime(timeEndFilm)} {film.Name}\n";
+                string str = $" {ConvertToTime(timeStartFilm)} - {ConvertToTime(timeEndFilm)} {film.Name}\n";
                 timeStartFilm = timeEndFilm;
 
                 schedule.Append(str);
             }
 
             return schedule.ToString();
-        }
-
-        public int CompareTo(object obj)
-        {
-            if (obj is Schedule)
-            {
-                Schedule schedule = (Schedule)obj;
-                if (EmptyTime < schedule.EmptyTime )
-                {
-                    return -1;
-                }
-                else if (EmptyTime == schedule.EmptyTime )
-                {
-                    return 0;
-                }
-                else
-                {
-                    return 1;
-                }
-            }
-
-            throw new ArgumentException("Incorrect type");
         }
 
         private string ConvertToTime(int value)
@@ -65,7 +76,5 @@ namespace Cinema_scheduling
 
             return $"{hour}:{strMinute}";
         }
-
-
     }
 }

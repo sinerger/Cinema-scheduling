@@ -14,9 +14,8 @@ namespace Cinema_scheduling
         public Hall(int number)
         {
             Number = number;
-            Schedule = new Schedule(Cinema.TimeClosed - Cinema.TimeOpen);
-
         }
+
         public string GetSheduling()
         {
             if (Schedule != null)

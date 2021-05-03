@@ -21,10 +21,15 @@ namespace Cinema_scheduling
                 new Film(180,"Fast & Furious 4"),
                 new Film(120,"Fast & Furious 5"),
                 new Film(160,"Fast & Furious 6"),
-                //new Film(200,"Fast & Furious 7"),
-                //new Film(145,"Fast & Furious 8"),
-                //new Film(245,"Fast & Furious 9")
+                new Film(200,"Fast & Furious 7"),
+                new Film(145,"Fast & Furious 8"),
+                new Film(245,"Fast & Furious 9"),
+                new Film(120,"Fast & Furious 10"),
+                new Film(200,"Fast & Furious 11")
             };
+
+            Films.Sort();
+            Films.Reverse();
         }
 
         public static License GetLicense()
@@ -37,10 +42,9 @@ namespace Cinema_scheduling
             return _license;
         }
 
-        public int GetSumDurationAllFilms()
+        public int GetAllDurationFilms()
         {
             int result = 0;
-
             foreach (Film film in Films)
             {
                 result += film.Duration;
