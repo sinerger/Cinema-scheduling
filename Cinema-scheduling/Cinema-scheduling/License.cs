@@ -10,7 +10,8 @@ namespace Cinema_scheduling
     {
         private static License _license;
         public List<Film> Films { get; set; }
-
+        public List<Schedule> AllSchedules { get; set; }
+        public int AverageDuration { get; set; }
         private License()
         {
             Films = new List<Film>()
@@ -30,6 +31,13 @@ namespace Cinema_scheduling
 
             Films.Sort();
             Films.Reverse();
+
+            int temp = 0;
+            foreach (Film film in Films)
+            {
+                temp += film.Duration;
+            }
+            AverageDuration = temp / Films.Count;
         }
 
         public static License GetLicense()
@@ -52,5 +60,7 @@ namespace Cinema_scheduling
 
             return result;
         }
+
+        
     }
 }

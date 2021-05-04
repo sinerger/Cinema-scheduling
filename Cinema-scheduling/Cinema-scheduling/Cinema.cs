@@ -50,6 +50,11 @@ namespace Cinema_scheduling
             }
         }
 
+        public void SetSchedules()
+        {
+
+        }
+
         public void SetSchedulesHalls()
         {
             Node node = new NodeForBestFillingHallFactory().GetNode(TimeClosed - TimeOpen);
@@ -63,6 +68,11 @@ namespace Cinema_scheduling
             {
                 list = node.GetListSchedulesMaxUniqueFilmForHalls(CountHall);
             }
+
+            //Node2 testNode = new Node2(CountHall);
+            //_license.AllSchedules = node.GetAllSchedules();
+            //testNode.CreateGraph();
+            //List<List<Schedule>> testlist = testNode.GetAllSchedules();
 
             int index = 0;
 

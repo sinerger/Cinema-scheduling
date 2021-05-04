@@ -60,6 +60,7 @@
     <Compile Include="GraphCreator\GraphCreatorForBestFillingHall.cs" />
     <Compile Include="GraphCreator\GraphCreatorForBestFillingSeveralHalls.cs" />
     <Compile Include="GraphCreator\IGraphCreator.cs" />
+    <Compile Include="Node2.cs" />
     <Compile Include="Schedule.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

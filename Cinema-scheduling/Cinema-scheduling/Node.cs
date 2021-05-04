@@ -36,6 +36,23 @@ namespace Cinema_scheduling
             GraphCreator.CreateGraph(lastFilm);
         }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         public List<Schedule> GetListSchedulesforHalls(int countHalls)
         {
             if (License.Films != null)
@@ -66,7 +83,6 @@ namespace Cinema_scheduling
                                     }
                                 }
                             }
-
                         }
                     }
                     else
@@ -181,7 +197,7 @@ namespace Cinema_scheduling
             throw new ArgumentNullException("List License.Films is null");
         }
 
-        private List<Schedule> GetAllSchedules()
+        public List<Schedule> GetAllSchedules()
         {
             if (Next.Count == 0)
             {

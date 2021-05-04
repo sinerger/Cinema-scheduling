@@ -9,12 +9,12 @@ namespace Cinema_scheduling
     public class Film : IComparable
     {
         public int Duration { get; set; }
-        public string Name { get; set; }
+        public string Title { get; set; }
 
         public Film(int duration, string name)
         {
             Duration = duration;
-            Name = name;
+            Title = name;
         }
 
         public override bool Equals(object obj)
@@ -24,7 +24,7 @@ namespace Cinema_scheduling
             {
                 Film film = (Film)obj;
 
-                if (Duration == film.Duration && Name == film.Name)
+                if (Duration == film.Duration && Title == film.Title)
                 {
                     result = true;
                 }
@@ -37,7 +37,7 @@ namespace Cinema_scheduling
         {
             StringBuilder result = new StringBuilder();
             string time = $"{Duration / 60}:{Duration % 60}";
-            result.Append($"{ time} {Name}");
+            result.Append($"{ time} {Title}");
 
             return result.ToString();
         }
@@ -48,20 +48,22 @@ namespace Cinema_scheduling
             {
                 int result = 1;
                 Film film = (Film) obj;
-                if (Duration < film.Duration)
-                {
-                    result = -1;
-                }
-                else if (Duration == film.Duration)
-                {
-                    result = 0;
-                }
-                else
-                {
-                    result = 1;
-                }
+                return Duration.CompareTo(film.Duration);
 
-                return result;
+                //if (Duration < film.Duration)
+                //{
+                //    result = -1;
+                //}
+                //else if (Duration == film.Duration)
+                //{
+                //    result = 0;
+                //}
+                //else
+                //{
+                //    result = 1;
+                //}
+
+                //return result;
             }
 
             throw new ArgumentException("Incorrect type");
