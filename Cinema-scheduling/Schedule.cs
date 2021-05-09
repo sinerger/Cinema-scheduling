@@ -7,16 +7,18 @@ namespace Cinema_scheduling
     public class Schedule : IComparable
     {
         private int _maxEmptyTime;
-        private License _license;
+        public int Rating
+        {
+            get
+            {
+                return GetRating();
+            }
+        }
         public int EmptyTime
         {
             get
             {
                 return GetEmptyTime();
-            }
-            private set
-            {
-                EmptyTime = value;
             }
         }
         public int CountUniqueFilm
@@ -25,23 +27,17 @@ namespace Cinema_scheduling
             {
                 return GetCountUniqueFilms();
             }
-            private set
-            {
-                CountUniqueFilm = value;
-            }
         }
 
         public List<Film> Films { get; set; }
 
         public Schedule()
         {
-            _license = License.GetLicense();
             Films = new List<Film>();
         }
 
         public Schedule(Schedule schedule)
         {
-            _license = License.GetLicense();
             _maxEmptyTime = schedule._maxEmptyTime;
             Films = new List<Film>(schedule.Films);
         }
@@ -57,7 +53,6 @@ namespace Cinema_scheduling
                 Films = currentFilms;
             }
 
-            _license = License.GetLicense();
             _maxEmptyTime = emptyTime;
         }
 
@@ -70,14 +65,13 @@ namespace Cinema_scheduling
                 if (EmptyTime >= film.Duration)
                 {
                     Films.Add(new Film(film));
-
                     result = true;
                 }
 
                 return result;
             }
 
-            throw new ArgumentException();
+            throw new ArgumentException("Film is null");
         }
 
         public void RemoveFilm(Film film)
@@ -134,13 +128,15 @@ namespace Cinema_scheduling
             {
                 bool result = true;
                 Schedule schedule = (Schedule)obj;
+
                 if (Films.Count == schedule.Films.Count)
                 {
                     for (int i = 0; i < schedule.Films.Count; i++)
                     {
-                        if (schedule.Films[i] != Films[i])
+                        if (!schedule.Films[i].Equals(Films[i]))
                         {
                             result = false;
+
                             break;
                         }
                     }
@@ -166,7 +162,7 @@ namespace Cinema_scheduling
 
         private int GetCountUniqueFilms()
         {
-            List<Film> allFilms = new List<Film>(_license.Films);
+            List<Film> allFilms = new List<Film>(Cinema.AllFilm);
             int countUniqueFilms = 0;
             foreach (Film film in Films)
             {
@@ -189,6 +185,14 @@ namespace Cinema_scheduling
             }
 
             return emptytime;
+        }
+
+        private int GetRating()
+        {
+            int result = 0 - EmptyTime;
+            result += CountUniqueFilm * 10;
+
+            return result;
         }
     }
 }

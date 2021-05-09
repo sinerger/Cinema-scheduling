@@ -59,7 +59,7 @@ namespace Cinema_scheduling
         public override string ToString()
         {
             StringBuilder result = new StringBuilder();
-            result.Append($"{Title} Empty time:{Schedule.EmptyTime}; Count unique films{Schedule.CountUniqueFilm}; {Schedule.ToString()}");
+            result.Append($"{Title} Empty time: {Schedule.EmptyTime}; Count unique films: {Schedule.CountUniqueFilm}; {Schedule.ToString()}");
 
             return result.ToString();
         }

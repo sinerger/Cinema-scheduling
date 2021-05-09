@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -6,120 +7,98 @@ namespace Cinema_scheduling.Tests
 {
     public class CinemaTests
     {
-        [TestCaseSource(typeof(CinemaCreated))]
-        public void CinemaConstructor_WhenValidTestPassed_ShouldCreateNewObjectCimenaWithEmptyHalls(int countHall, Cinema expected)
+        //[TestCase(1, 1, 1)]
+        [TestCase(2, 2, 2)]
+        //[TestCase(3, 3, 3)]
+        //[TestCase(4, 4, 4)]
+        //[TestCase(5, 5, 5)]
+        //[TestCase(6, 6, 6)]
+        //[TestCase(2, 50, 2)]
+        public void SetSchedulesForHalls_WhenValidTestPassed_ShouldSetTwoSchedules(int countFilm, int countHall, int expectedCountUniqueFilms)
         {
-            Cinema actual = new Cinema(countHall);
+            Cinema actualCinema = GetCinemaForValidTest(countFilm, countHall);
+            List<Film> allFilms = new List<Film>(Cinema.AllFilm);
+            actualCinema.SetSchedulesForHalls();
+            List<Schedule> actualSchedule = actualCinema.GetSchedules();
+            int actualCountUniqueFilms = 0;
+            int actualEmptyTime = 0;
+
+            foreach (Schedule schedule in actualSchedule)
+            {
+                actualEmptyTime += schedule.EmptyTime;
+                foreach (Film scheduleFilm in schedule.Films)
+                {
+                    if (allFilms.Contains(scheduleFilm))
+                    {
+                        allFilms.Remove(scheduleFilm);
+                        ++actualCountUniqueFilms;
+                    }
+                }
+            }
+
+            actualEmptyTime = actualEmptyTime / actualSchedule.Count;
+
+            bool allScheduleIsUnique = true;
+            List<Schedule> allSchedules = new List<Schedule>();
+            foreach (Hall hall in actualCinema.Halls)
+            {
+                if (allSchedules.Contains(hall.Schedule))
+                {
+                    allScheduleIsUnique = false;
+                    break;
+                }
+
+                allSchedules.Add(new Schedule(hall.Schedule));
+            }
+
+
+            Assert.AreEqual(expectedCountUniqueFilms, actualCountUniqueFilms);
+            Assert.IsTrue(actualEmptyTime >= 0);
+            Assert.IsTrue(allScheduleIsUnique);
+        }
+
+        [TestCase(1, "Halls count: 1")]
+        [TestCase(2, "Halls count: 2")]
+        [TestCase(3, "Halls count: 3")]
+        [TestCase(4, "Halls count: 4")]
+        public void ToString_WhenValidTestPassed_ShouldReturnStringAllSchedules(int countHall, string expected)
+        {
+            Cinema actualCinema = GetCinemaForValidTest(countHall, countHall);
+
+            string actual = actualCinema.ToString();
 
             Assert.AreEqual(expected, actual);
         }
 
-        public class CinemaCreated : IEnumerable
+        [TestCase(1, 1, true)]
+        [TestCase(2, 2, true)]
+        [TestCase(1, 2, false)]
+        [TestCase(2, 1, false)]
+        public void Equals_WhenValidTestPassed_ShouldReturnTrueOrFalse(int countHallActual, int countHallExpected, bool expected)
         {
-            int countHall;
+            Cinema actualCinema = GetCinemaForValidTest(countHallActual, countHallActual);
+            Cinema expectedCinema = GetCinemaForValidTest(countHallExpected, countHallExpected);
 
-            public IEnumerator GetEnumerator()
-            {
-                yield return new object[]
-                {
-                    countHall = -10,
-                    new Cinema(countHall)
-                };
-
-                yield return new object[]
-                {
-                    countHall = -1,
-                    new Cinema(countHall)
-                };
-
-                yield return new object[]
-                {
-                    countHall = 0,
-                    new Cinema(countHall)
-                };
-
-                yield return new object[]
-                {
-                    countHall = 1,
-                    new Cinema(countHall)
-                };
-
-                yield return new object[]
-                {
-                    countHall = 2,
-                    new Cinema(countHall)
-                };
-
-                yield return new object[]
-                {
-                    countHall = 3,
-                    new Cinema(countHall)
-                };
-
-                yield return new object[]
-                {
-                    countHall = 4,
-                    new Cinema(countHall)
-                };
-
-                yield return new object[]
-                {
-                    countHall = 5,
-                    new Cinema(countHall)
-                };
-
-                yield return new object[]
-                {
-                    countHall = 10,
-                    new Cinema(countHall)
-                };
-
-                yield return new object[]
-                {
-                    countHall = 100,
-                    new Cinema(countHall)
-                };
-            }
-        }
-
-        [TestCaseSource(typeof(SetTwoSchedules))]
-        public void SetSchedulesForHalls_WhenValidTestPassed_ShouldSetTwoSchedules(Cinema expected, Cinema actual)
-        {
-            actual.SetSchedulesForHalls();
+            bool actual = actualCinema.Equals(expectedCinema);
 
             Assert.AreEqual(expected, actual);
         }
 
-        public class SetTwoSchedules : IEnumerable
+        [TestCase(1,null)]
+        public void Create_WhenInvalidTestPassed_ShouldReturnArgumentNullException(int countHall,List<Film>films)
         {
-            //private int _countHall = 2;
+            Assert.Throws<ArgumentNullException>(() => Cinema.Create(countHall, films,600,1440));
+        }
 
-            Cinema actual = new Cinema(2);
-            Cinema expected = new Cinema(2);
-
-            //private List<Schedule> _schedules = new List<Schedule>()
-            //{
-            //    new Schedule(840,new List<Film>()
-            //    {
-            //        new Film(80,"Fast & Furious"),
-            //        new Film(88,"Fast & Furious 2")
-            //    }),
-            //    new Schedule(840,new List<Film>()
-            //    {
-            //        new Film(88,"Fast & Furious 2"),
-            //        new Film(80,"Fast & Furious")
-            //    })
-            //};
-
-            public IEnumerator GetEnumerator()
+        private Cinema GetCinemaForValidTest(int countFilm, int countHall)
+        {
+            List<Film> films = new List<Film>();
+            for (int i = 0; i < countFilm; i++)
             {
-                //expected.SetSchedulesForHalls(_schedules);
-                yield return new object[]
-                {
-                    expected,
-                    new Cinema(5)
-                };
+                films.Add(new Film(100 /*+ (i * i)*/, $"Some Film {i + 1}"));
             }
+
+            return Cinema.Create(countHall, films,600,1440);
         }
     }
 }

@@ -6,13 +6,22 @@ namespace Cinema_scheduling
 {
     public class Cinema
     {
-        private License _license;
-        private static int _timeOpen = 600;
-        private static int _timeClosed = 1440;
+        private static int _timeOpen;
+        private static int _timeClosed;
         private List<Schedule> _bestSchedules;
         private List<Hall> _halls;
-        private int _countHall;
-
+        private static List<Film> _allFilm;
+        public static List<Film> AllFilm
+        {
+            get
+            {
+                return _allFilm;
+            }
+            private set
+            {
+                _allFilm = value;
+            }
+        }
         public static int TimeOpen
         {
             get
@@ -21,7 +30,7 @@ namespace Cinema_scheduling
             }
             private set
             {
-                _timeOpen = value;
+                _timeOpen = value >= 0 ? value : 0;
             }
         }
         public static int TimeClosed
@@ -32,7 +41,7 @@ namespace Cinema_scheduling
             }
             private set
             {
-                _timeClosed = value;
+                _timeClosed = value >= _timeOpen ? value : _timeOpen;
             }
         }
         public int CountHall
@@ -40,10 +49,6 @@ namespace Cinema_scheduling
             get
             {
                 return _halls.Count;
-            }
-            private set
-            {
-                _countHall = value >= 0 ? value : 0;
             }
         }
         public List<Hall> Halls
@@ -58,16 +63,38 @@ namespace Cinema_scheduling
             }
         }
 
-        public Cinema(int countHall)
+        private Cinema(int countHall, List<Film> allFilm, int timeOpen, int timeClosed)
         {
-            _license = License.GetLicense();
+            if (allFilm != null)
+            {
+                AllFilm = new List<Film>(allFilm);
+                AllFilm.Sort();
+                AllFilm.Reverse();
+            }
+            else
+            {
+                AllFilm = new List<Film>();
+            }
+
+            TimeOpen = timeOpen;
+            TimeClosed = timeClosed;
             _bestSchedules = new List<Schedule>();
             Halls = new List<Hall>();
 
             for (int i = 0; i < countHall; i++)
             {
-                Halls.Add(new Hall("Hall"));
+                Halls.Add(new Hall($"Hall { i + 1}"));
             }
+        }
+
+        public static Cinema Create(int countHall, List<Film> allFilm, int timeOpen, int timeClosed)
+        {
+            if (allFilm != null)
+            {
+                return new Cinema(countHall, allFilm, timeOpen, timeClosed);
+            }
+
+            throw new ArgumentNullException("List films is null");
         }
 
         public void SetSchedulesForHalls()
@@ -78,39 +105,33 @@ namespace Cinema_scheduling
             foreach (var hall in Halls)
             {
                 hall.Schedule = _bestSchedules[indexSchedules];
-                indexSchedules++;
+                indexSchedules += indexSchedules < _bestSchedules.Count - 1 ? 1 : 0;
             }
         }
 
-        public void SetSchedulesForHalls(List<Schedule> schedules)
+        public List<Schedule> GetSchedules()
         {
-            if (schedules != null)
+            List<Schedule> schedules = new List<Schedule>();
+
+            if (Halls != null)
             {
-                if (schedules.Count >= _halls.Count)
+                foreach (Hall hall in Halls)
                 {
-                    int index = 0;
-                    foreach (Hall hall in _halls)
-                    {
-                        hall.Schedule = schedules[index++];
-                    }
+                    schedules.Add(hall.Schedule);
                 }
             }
-        }
 
-        public void AddHall(int count = 1)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                Halls.Add(new Hall());
-            }
+            return schedules;
         }
 
         public override bool Equals(object obj)
         {
             bool result = false;
+
             if (obj is Cinema)
             {
                 Cinema cinema = (Cinema)obj;
+
                 if (Halls.Count == cinema.Halls.Count)
                 {
                     result = true;
@@ -132,17 +153,14 @@ namespace Cinema_scheduling
         public override string ToString()
         {
             StringBuilder result = new StringBuilder();
-            foreach (Hall hall in Halls)
-            {
-                result.Append(hall.ToString());
-            }
+            result.Append($"Halls count: {Halls.Count}");
 
             return result.ToString();
         }
 
         private void SetSchedules(Schedule currentSchedule)
         {
-            foreach (Film film in _license.Films)
+            foreach (Film film in AllFilm)
             {
                 bool isAddedFilm = false;
 
@@ -165,64 +183,45 @@ namespace Cinema_scheduling
         {
             if (_bestSchedules != null)
             {
-                if (_bestSchedules.Count < CountHall)
+                if (!_bestSchedules.Contains(currentSchedule) && _bestSchedules.Count < CountHall)
                 {
-                    if (!_bestSchedules.Contains(currentSchedule))
-                    {
-                        _bestSchedules.Add(new Schedule(currentSchedule));
-                    }
+                    _bestSchedules.Add(new Schedule(currentSchedule));
+
+                    return;
                 }
 
-                _bestSchedules.Sort();
-                if ((TimeClosed - TimeOpen * CountHall) >= _license.GetAllDurationFilms())
+                if (!_bestSchedules.Contains(currentSchedule))
                 {
                     foreach (Schedule schedule in _bestSchedules)
                     {
-                        if (currentSchedule.EmptyTime < schedule.EmptyTime && currentSchedule.CountUniqueFilm > schedule.CountUniqueFilm)
+                        if (currentSchedule.Rating > schedule.Rating)
                         {
-                            _bestSchedules.Add(new Schedule(currentSchedule));
                             _bestSchedules.Remove(schedule);
+                            _bestSchedules.Add(new Schedule(currentSchedule));
+
                             break;
                         }
                     }
-
-                    //List<Film> allFilms = new List<Film>(_license.Films);
-                    //foreach (Schedule schedule in _bestSchedules)
-                    //{
-                    //    foreach (Film film in schedule.Films)
-                    //    {
-                    //        if (allFilms.Contains(film))
-                    //        {
-                    //            allFilms.Remove(film);
-                    //        }
-                    //    }
-                    //}
-                    //if (allFilms.Count != 0)
-                    //{
-                    //    _bestSchedules.Sort();
-                    //    _bestSchedules.RemoveAt(_bestSchedules.Count - 1);
-                    //}
-
                 }
 
+                //List<Film> allFilms = new List<Film>(AllFilm);
+
+                //foreach (Schedule schedule in _bestSchedules)
+                //{
+                //    foreach (Film film in schedule.Films)
+                //    {
+                //        if (allFilms.Contains(film))
+                //        {
+                //            allFilms.Remove(film);
+                //        }
+                //    }
+                //}
+
+                //if (allFilms.Count != 0)
+                //{
+                //    _bestSchedules.RemoveAt(_bestSchedules.Count - 1);
+                //}
             }
-        }
-
-        private string GetSchedulesAllHalls()
-        {
-            if (Halls != null)
-            {
-                StringBuilder result = new StringBuilder();
-
-                foreach (Hall hall in Halls)
-                {
-                    result.Append($"Hall #{hall.Title}\n{hall.GetSheduling()}\n");
-                }
-
-                return result.ToString();
-            }
-
-            throw new ArgumentNullException("List Halls is null");
         }
     }
 }
