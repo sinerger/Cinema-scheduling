@@ -40,7 +40,10 @@ namespace Cinema_scheduling
         public override string ToString()
         {
             StringBuilder result = new StringBuilder();
-            string time = $"{Duration / 60}:{Duration % 60}";
+            int hour = Duration / 60;
+            int minute = Duration % 60;
+            string strMinute = minute == 0 ? "00" : minute.ToString();
+            string time = $"{hour}:{strMinute}";
             result.Append($"{ time} {Title}");
 
             return result.ToString();

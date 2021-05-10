@@ -29,16 +29,6 @@ namespace Cinema_scheduling
             _schedule = new Schedule();
         }
 
-        public string GetSheduling()
-        {
-            if (Schedule != null)
-            {
-                return Schedule.ToString();
-            }
-
-            throw new ArgumentNullException("Schedule is null");
-        }
-
         public override bool Equals(object obj)
         {
             bool result = false;

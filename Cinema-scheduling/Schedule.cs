@@ -111,11 +111,10 @@ namespace Cinema_scheduling
         {
             StringBuilder schedule = new StringBuilder();
             int timeStartFilm = Cinema.TimeOpen;
-            schedule.Append("\n");
             foreach (Film film in Films)
             {
                 int timeEndFilm = timeStartFilm + film.Duration;
-                schedule.Append($"{ConvertToTime(timeStartFilm)} - {ConvertToTime(timeEndFilm)} {film.Title}\n");
+                schedule.Append($"\n{ConvertToTime(timeStartFilm)} - {ConvertToTime(timeEndFilm)} {film.Title}");
                 timeStartFilm = timeEndFilm;
             }
 

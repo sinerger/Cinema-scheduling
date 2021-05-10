@@ -18,8 +18,10 @@ namespace Cinema_scheduling.Tests
         {
             Cinema actualCinema = GetCinemaForValidTest(countFilm, countHall);
             List<Film> allFilms = new List<Film>(Cinema.AllFilm);
+            List<Schedule> actualSchedule = new List<Schedule>();
+
             actualCinema.SetSchedulesForHalls();
-            List<Schedule> actualSchedule = actualCinema.GetSchedules();
+            actualSchedule = actualCinema.GetSchedules();
             int actualCountUniqueFilms = 0;
             int actualEmptyTime = 0;
 
@@ -40,6 +42,7 @@ namespace Cinema_scheduling.Tests
 
             bool allScheduleIsUnique = true;
             List<Schedule> allSchedules = new List<Schedule>();
+
             foreach (Hall hall in actualCinema.Halls)
             {
                 if (allSchedules.Contains(hall.Schedule))
@@ -50,7 +53,6 @@ namespace Cinema_scheduling.Tests
 
                 allSchedules.Add(new Schedule(hall.Schedule));
             }
-
 
             Assert.AreEqual(expectedCountUniqueFilms, actualCountUniqueFilms);
             Assert.IsTrue(actualEmptyTime >= 0);
@@ -93,6 +95,7 @@ namespace Cinema_scheduling.Tests
         private Cinema GetCinemaForValidTest(int countFilm, int countHall)
         {
             List<Film> films = new List<Film>();
+
             for (int i = 0; i < countFilm; i++)
             {
                 films.Add(new Film(100 /*+ (i * i)*/, $"Some Film {i + 1}"));
