@@ -83,7 +83,7 @@ namespace Cinema_scheduling
 
             for (int i = 0; i < countHall; i++)
             {
-                Halls.Add(new Hall($"Hall { i + 1}"));
+                Halls.Add(new Hall($"Hall { i + 1 }"));
             }
         }
 
@@ -97,7 +97,7 @@ namespace Cinema_scheduling
             throw new ArgumentNullException("List films is null");
         }
 
-        public void SetSchedulesForHalls()
+        public void CreateSchedules()
         {
             SetSchedules(new Schedule(TimeClosed - TimeOpen));
             int indexSchedules = 0;
@@ -158,32 +158,80 @@ namespace Cinema_scheduling
             return result.ToString();
         }
 
-        private void SetSchedules(Schedule currentSchedule)
+        private int GetTotalDurationFilms()
         {
+            int result = 0;
             foreach (Film film in AllFilm)
             {
-                bool isAddedFilm = false;
+                result += film.Duration;
+            }
 
-                if (currentSchedule.AddFilm(film))
+            return result;
+        }
+
+        private double GetAverageDurationFilms()
+        {
+            return GetTotalDurationFilms() / AllFilm.Count;
+        }
+
+        private int GetCountUniqueFilmsInBestSchedules()
+        {
+            List<Film> allFilm = new List<Film>(AllFilm);
+            int result = 0;
+            foreach (Schedule schedule in _bestSchedules)
+            {
+                foreach (Film film in schedule.Films)
                 {
-                    SetSchedules(currentSchedule);
-                    isAddedFilm = true;
+                    if (allFilm.Count != 0 && allFilm.Contains(film))
+                    {
+                        allFilm.Remove(film);
+                        ++result;
+                    }
+                    else if (allFilm.Count == 0)
+                    {
+                        return result;
+                    }
                 }
+            }
 
-                SetBestSchedules(currentSchedule);
+            return result;
+        }
 
-                if (isAddedFilm)
+        private void SetSchedules(Schedule currentSchedule)
+        {
+            if (currentSchedule != null)
+            {
+                foreach (Film film in AllFilm)
                 {
-                    currentSchedule.RemoveFilm(film);
+                    bool isAddedFilm = false;
+
+                    if (currentSchedule.AddFilm(film))
+                    {
+                        SetSchedules(currentSchedule);
+                        isAddedFilm = true;
+                    }
+
+                    SetBestSchedules(currentSchedule);
+
+                    if (isAddedFilm)
+                    {
+                        currentSchedule.RemoveFilm(film);
+                    }
                 }
+            }
+            else
+            {
+                throw new ArgumentNullException("Current schedule is null");
             }
         }
 
         private void SetBestSchedules(Schedule currentSchedule)
         {
-            if (_bestSchedules != null)
+            if (_bestSchedules != null && currentSchedule != null)
             {
-                if (!_bestSchedules.Contains(currentSchedule) && _bestSchedules.Count < CountHall)
+                if (!_bestSchedules.Contains(currentSchedule) 
+                    && _bestSchedules.Count < CountHall 
+                    && currentSchedule.EmptyTime < GetAverageDurationFilms())
                 {
                     _bestSchedules.Add(new Schedule(currentSchedule));
 
@@ -192,35 +240,36 @@ namespace Cinema_scheduling
 
                 if (!_bestSchedules.Contains(currentSchedule))
                 {
-                    foreach (Schedule schedule in _bestSchedules)
+                    int tempCountUniqueFilms = GetCountUniqueFilmsInBestSchedules();
+                    Schedule tempSchedule = null;
+                    for (int i = 0; i < _bestSchedules.Count; i++)
                     {
-                        if (currentSchedule.Rating > schedule.Rating)
+                        if (_bestSchedules[i].Rating <= currentSchedule.Rating)
                         {
-                            _bestSchedules.Remove(schedule);
+                            tempSchedule = _bestSchedules[i];
+                            _bestSchedules.Remove(tempSchedule);
                             _bestSchedules.Add(new Schedule(currentSchedule));
 
-                            break;
+                            if (tempCountUniqueFilms >= GetCountUniqueFilmsInBestSchedules())
+                            {
+                                _bestSchedules.Remove(currentSchedule);
+                                _bestSchedules.Add(tempSchedule);
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
                     }
                 }
-
-                //List<Film> allFilms = new List<Film>(AllFilm);
-
-                //foreach (Schedule schedule in _bestSchedules)
-                //{
-                //    foreach (Film film in schedule.Films)
-                //    {
-                //        if (allFilms.Contains(film))
-                //        {
-                //            allFilms.Remove(film);
-                //        }
-                //    }
-                //}
-
-                //if (allFilms.Count != 0)
-                //{
-                //    _bestSchedules.RemoveAt(_bestSchedules.Count - 1);
-                //}
+            }
+            else if (_bestSchedules == null)
+            {
+                throw new ArgumentNullException("List best schedules is null");
+            }
+            else
+            {
+                throw new ArgumentNullException("Current schedule is null");
             }
         }
     }

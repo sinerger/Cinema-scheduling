@@ -8,8 +8,8 @@ namespace Cinema_scheduling.Tests
     public class ScheduleTests
     {
         [TestCase(200, 0, "")]
-        [TestCase(200, 1, "\n10:00 - 11:40 Some Film 1")]
-        [TestCase(200,2, "\n10:00 - 11:40 Some Film 1\n11:40 - 13:20 Some Film 2")]
+        [TestCase(200, 1, "10:00 - 11:40 Some Film 1")]
+        [TestCase(200,2, "10:00 - 11:40 Some Film 1 \n11:40 - 13:20 Some Film 2")]
         public void ToString_WhenValidTestPassed_SchouldReturnStringCurrentSchedule(int actualEmptyTime, int countFilms, string expected)
         {
             List<Film> actualFilms = GetFilms(countFilms);

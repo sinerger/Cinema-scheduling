@@ -114,11 +114,11 @@ namespace Cinema_scheduling
             foreach (Film film in Films)
             {
                 int timeEndFilm = timeStartFilm + film.Duration;
-                schedule.Append($"\n{ConvertToTime(timeStartFilm)} - {ConvertToTime(timeEndFilm)} {film.Title}");
+                schedule.Append($"\n{ConvertToTime(timeStartFilm)} - {ConvertToTime(timeEndFilm)} {film.Title} ");
                 timeStartFilm = timeEndFilm;
             }
 
-            return schedule.ToString();
+            return schedule.ToString().Trim();
         }
 
         public override bool Equals(object obj)

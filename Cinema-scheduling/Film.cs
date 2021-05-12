@@ -44,9 +44,9 @@ namespace Cinema_scheduling
             int minute = Duration % 60;
             string strMinute = minute == 0 ? "00" : minute.ToString();
             string time = $"{hour}:{strMinute}";
-            result.Append($"{ time} {Title}");
+            result.Append($"{ time} {Title} ");
 
-            return result.ToString();
+            return result.ToString().Trim();
         }
 
         public int CompareTo(object obj)
