@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Cinema_scheduling.Tests
 {
@@ -47,6 +47,8 @@ namespace Cinema_scheduling.Tests
 
             bool actualAllScheduleIsUnique = true;
             List<Schedule> allSchedules = new List<Schedule>();
+            var temp = !actualCinema.Halls.GroupBy(x => x.Schedule).
+                Any(y => y.ToList().Count > 1);
 
             foreach (Hall hall in actualCinema.Halls)
             {
@@ -58,6 +60,8 @@ namespace Cinema_scheduling.Tests
 
                 allSchedules.Add(new Schedule(hall.Schedule));
             }
+
+            Assert.AreEqual(actualAllScheduleIsUnique, temp);
 
             Assert.AreEqual(expectedCountUniqueFilms, actualCountUniqueFilms);
             Assert.IsTrue(actualEmptyTime >= 0);

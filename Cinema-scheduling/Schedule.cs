@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Cinema_scheduling
@@ -7,27 +8,11 @@ namespace Cinema_scheduling
     public class Schedule : IComparable
     {
         private int _maxEmptyTime;
-        public int Rating
-        {
-            get
-            {
-                return GetRating();
-            }
-        }
-        public int EmptyTime
-        {
-            get
-            {
-                return GetEmptyTime();
-            }
-        }
-        public int CountUniqueFilm
-        {
-            get
-            {
-                return GetCountUniqueFilms();
-            }
-        }
+        public int FullTime => Cinema.TimeClosed - Cinema.TimeOpen;
+        public int Rating => CountUniqueFilm * 10 - EmptyTime;
+
+        public int EmptyTime => FullTime - Films.Sum(x => x.Duration);
+        public int CountUniqueFilm => GetCountUniqueFilms();
 
         public List<Film> Films { get; set; }
 
@@ -123,10 +108,9 @@ namespace Cinema_scheduling
 
         public override bool Equals(object obj)
         {
-            if (obj is Schedule)
+            if (obj is Schedule schedule)
             {
-                bool result = true;
-                Schedule schedule = (Schedule)obj;
+                var result = true;
 
                 if (Films.Count == schedule.Films.Count)
                 {
@@ -172,26 +156,6 @@ namespace Cinema_scheduling
                 }
             }
             return countUniqueFilms;
-        }
-
-        private int GetEmptyTime()
-        {
-            int emptytime = _maxEmptyTime;
-
-            foreach (Film film in Films)
-            {
-                emptytime -= film.Duration;
-            }
-
-            return emptytime;
-        }
-
-        private int GetRating()
-        {
-            int result = 0 - EmptyTime;
-            result += CountUniqueFilm * 10;
-
-            return result;
         }
     }
 }
